@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Colette Merola — Artiste peintre</title>
+  <meta name="description" content="Colette Merola est une artiste peintre montréalaise" />
+  <style>
+  
+  body {margin:0;padding:0;padding-top:150px}		/* Pour que les éléments apparaissent bien, sinon les trucs ne vont pas au complet à gauche ou droite */
+													/* Le padding top détermine combien d'espace avant que le site commence (la photo de coco dans son atelier) */
+  
+  .site-header {
+  position: fixed; 					/* Fait en sorte que ça reste même quand on défile */
+  width : 100%;    					/* Toute la largeur de l'écran */
+  top: 0;          					/* Est collé en haut. Sans ça, on a un trou en haut */
+  background: white;				/* Sinon il est transparent */
+  border-bottom: 1px solid #000;	/* Ligne noir en bas de la banière */
+  z-index: 1000;  
+}
+
+.banner {
+  display: flex;					/* Fait en sorte que les trucs sont affichés de gauche à droite et non haut en bas */
+  align-items: center;				/* Centré verticalement */
+  padding: 4px 1vw;				/* Le premier nombre est pour l'espace vertical, le deuxième horizontal (à gauche et à droite)*/
+}
+
+.logo {
+  width: clamp(60px, 11%, 160px);	/* Taille du logo avec limite minimale, la règle à suivre, puis limite maximale */
+  height: auto;						/* Taille proportionnelle avec la largeur pour garder le ratio initiale de la photo */
+
+}
+
+
+
+.title-block {
+  justify-content : center;			
+  text-align: center;
+  flex-grow: 1;						/* C'est ici que le problème du titre pas au milieu émerge. Il se met au milieu des deux éléments */
+
+}
+
+.title-block h1 {
+  margin: 0;
+  font-size: clamp(1.2rem, 3vw, 2.8rem);
+}
+
+.title-block h2 {
+  margin: 0;
+  font-size: clamp(0.9rem, 2vw, 1.6rem);
+  font-weight: normal;
+}
+
+.topnav {
+  display: flex;
+  align-items: center;
+}
+
+.topnav a {
+  padding: 6px 0.8vw;				/* Hauteur et largeur de l'encadré */
+  margin-left: 0;  				/* Espace entre les éléments du menu */
+  text-decoration: none; 			/* Sans ça, les éléments sont soulignés */
+  color: #333;						/* Sans ça le texte est mauve */
+  border-radius: 999px;   			/* Arrondit les coins, permet d'avoir une forme de pilule au lieu d'un rectangle */
+  transition: background-color 0.01s ease, color 0.5s ease; 	/* Premier détermine la vitesse de l'encadré, le deuxième, la vitesse du texte dans l'encadré */
+  text-align: center;
+  font-size : clamp(0.7rem, 0.9vw, 3rem)
+}
+
+  .topnav a:hover {
+  background-color: #333;			/* Sans ça on n'a pas l'encadré pilule */
+  color: white;						/* Change la couleur du texte de noir à blanc pour qu'on puisse lire dans l'encadré */
+}
+  
+  
+  
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 24px;
+  padding: 0 32px;          /* Petite marges à gauche et à droite quand on regarde les photos dans leur ensemble */
+}
+
+@media (min-width: 1200px) {
+  .gallery-grid {
+    grid-template-columns: repeat(4, 1fr);  /* De 1 à 4 éléments (photos) par ligne */
+  }
+}
+  
+
+@media (max-width: 768px) {				
+  .lightbox-content {					
+    grid-template-columns: 1fr;
+  }
+}
+
+  
+  
+.card {
+  cursor: pointer;    /* Permet de transformer le pointeur d'une pointe à une main pour savoir qu'on peut cliquer sur les photos */
+  position: relative; /* Nécessaire sinon la photo est complètement mal cadrée */
+}
+
+
+
+.card img {
+  width: 100%;		  /* Dicte combien de l'espace est occupé par les cartes d'images (images pas ouvertes) */
+  height: auto;
+  display: block;	  /* Fait en sorte que la ligne au complet est occupée, empêches les éléments de s'empiler */	
+  border-radius: 6px; /* Arrondit un peu les coins des cartes */
+}
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  .lightbox {
+  position: fixed;    /* Obligatoire pour le fonctionnement des lightbox */
+  inset: 0;				/* La seule valeur qui fonctionne est 0, sinon aucune lightbox */
+  background: rgba(0,0,0,0.8);  /* Arrière-plan derrière le lightbox, le dernier nombre détermine si c'est blanc (0) ou noir (1) */
+  display: none;			/* Permet de ne pas prendre en compte le reste du site, donc d'afficher en plein milieu */
+	z-index: 2000;
+}
+
+.lightbox.open {		/* Les éléments qui permettent de bien afficher la lightbox */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lightbox-content { 	/* L'encadré autour de la photo qui contient le texte de description */
+  background: white;
+  max-width: 90%;
+  max-height: 90%;
+  display: grid;						/* Fait en sorte que les éléments ne sont pas empilés */
+  grid-template-columns: 1fr 280px; 	/* Fait en sorte que le texte est à droite et non un peu n'importe ou */
+  gap: 24px;
+  padding: 24px;
+  position: relative;
+}
+
+.lightbox-content img {
+  max-width: 100%;
+  max-height: 80vh;						/* Jusqu'à 80% de la hauteur verticale */
+  object-fit: contain;					/* Garde le ratio original de l'image, laisse des espaces blancs au besoin */
+}
+
+.lightbox-info {
+  font-size: 0.95rem;					/* Spécifie la taille du texte en fonction de la taile de la lightbox */
+}
+
+.lightbox-close {						/* Affiche le X pour fermer l'onglet lightbox */
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  font-size: 2rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+  
+body.lightbox-open {					/* Empêche de défiler la page derrière le lightbox */
+  overflow: hidden;
+}
+  
+  .lightbox-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 3rem;
+  background: none;
+  border: none;
+  color: black;
+  cursor: pointer;
+  padding: 0 12px;
+}
+
+.lightbox-arrow.prev { left: 20px; }
+.lightbox-arrow.next { right: 325px; }
+
+  
+  
+  
+</style>
+</head>
+
+
+
+<body>
+
+
+<header class="site-header">
+  <div class="banner" role="banner">
+    <img 
+      src="images/082f61_5d1f67d7b39f4a7faaef79e809c6144e~mv2.png" 
+      alt="Logo de Colette"
+      class="logo"
+    >
+
+    <div class="title-block">
+      <h1>Colette Merola</h1>
+      <h2>Artiste peintre — Montréal</h2>
+    </div>
+
+    <nav class="topnav" aria-label="Menu">
+      <a href="#apropos">À propos</a>
+      <a href="#disponibles">Œuvres disponibles</a>
+      <a href="#vendues">Œuvres non disponibles</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+
+
+
+
+
+
+
+
+
+
+
+  <main class="container">
+    <section class="hero" id="apropos">
+	<div class="photo">
+		<img src="images/PXL_20240714_183850109_edited_edited_edi.jpg" alt="Photo de Colette" class="center" style="width:clamp(40px, 65%, 550px); display:block; margin-left:auto; margin-right:auto; ">
+	</div>
+      <div class="bio" class="center" style="width:clamp(80px, 75%,  700px) ; display:block; margin-left:auto; margin-right:auto; ">
+        <br><br><p> Née à Montréal et y résidant toujours, je suis une artiste peintre attachée à cette ville, d’une grande richesse culturelle. Depuis l'enfance, j'aime dessiner et m'adonner à différentes formes d'art plastique.</p>
+        <p>Tout en œuvrant dans l’enseignement pendant plusieurs années, j'ai suivi plusieurs formations artistiques, notamment au Centre design et impression textile de Montréal, où j'ai pu approfondir ma recherche sur les différents agencements de couleurs et sur les superpositions picturales qu'offrent cette forme d’art, principalement sur tissu.</p>
+        <p>Au travers d’autres formations, j’ai découvert par la suite une nouvelle passion artistique, celle de la peinture acrylique, à laquelle je me consacre entièrement depuis 2021. J’aime parfois enrichir ma peinture avec des touches d'encre acrylique, d'aquarelle, de pastel gras ou de collage afin d'obtenir la luminosité, les contrastes et le relief recherchés. Le mouvement, la texture et la superposition des couleurs en transparence qui se dégagent de mes œuvres sont les liens conducteurs dans mes créations.</p>
+		<p>Je puise principalement mon inspiration dans la nature. L'exploration des diverses variétés de textures, de formes et de couleurs qu'elle offre est un enchantement sans cesse renouvelé. Certains tableaux expriment toutefois sa fragilité et sa précarité dans un environnement de plus en plus menacé. Les animaux qu'on peut apercevoir à l'occasion sur certaines de mes toiles, comme les oiseaux et les poissons, sont apparus d'eux-mêmes en cours de création. Je les ai révélés davantage, par contraste. En somme, mes œuvres se veulent un hommage à la nature. Tout comme celle-ci, elles sont fortement colorées et en mouvement.</p>
+		<br><br><br><br><br><br><br><br>
+      </div>
+    </section>
+
+ 
+  
+
+
+
+
+
+
+
+<section id="disponibles">
+  <div class="section-title">
+    <h2 style = "margin-left:35px">Œuvres disponibles</h2>
+    <div class="dim" style = "margin-left:35px">Prix en $ CAN — Dimensions indiquées <br><br></div>
+  </div>
+
+  <div class="gallery-grid" id="gallery-available"></div>
+</section>
+
+<section id="vendues">
+  <div class="section-title">
+    <h2 style = "margin-left:35px">Œuvres non disponibles</h2>
+  </div>
+
+  <div class="gallery-grid" id="gallery-sold"></div>
+</section>
+
+    <section id="contact" style="margin-top:28px">
+      <h2>Contact</h2>
+      <div class="contact-form">
+        <!-- This contact form uses mailto as a fallback so it works on static hosting. Replace action or integrate an API for server handling. -->
+        <form id="contactForm">
+          <label for="prenom">Prénom</label>
+          <input id="prenom" name="prenom" type="text" required>
+
+          <label for="nom">Nom de famille</label>
+          <input id="nom" name="nom" type="text" required>
+
+          <label for="email">Courriel</label>
+          <input id="email" name="email" type="email" required>
+
+          <label for="objet">Objet</label>
+          <input id="objet" name="objet" type="text">
+
+          <label for="message">Laissez-moi un message...</label>
+          <textarea id="message" name="message"></textarea>
+
+          <div style="margin-top:12px; display:flex; gap:8px; align-items:center">
+            <button type="submit" class="btn">Envoyer</button>
+            <div id="formStatus" style="color:var(--muted)"></div>
+          </div>
+        </form>
+        <small style="display:block;margin-top:10px;color:var(--muted)">Note : ce formulaire ouvre votre client mail. To set up server handling, integrate Formspree or Netlify Forms and replace the submission code.</small>
+      </div>
+    </section>
+
+  </main>
+
+
+<div id="lightbox" class="lightbox" aria-hidden="true">
+  <div class="lightbox-content">
+    <img id="lightbox-img" alt="">
+    <div class="lightbox-info">
+      <h3 id="lightbox-title"></h3>
+      <p id="lightbox-desc"></p>
+      <p id="lightbox-dim"></p>
+      <p id="lightbox-price"></p>
+    </div>
+    <button class="lightbox-close" aria-label="Fermer">×</button>
+	<button class="lightbox-arrow prev" aria-label="Previous image">‹</button>
+	<button class="lightbox-arrow next" aria-label="Next image">›</button>
+
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="gallery.js"></script>
+
+</body>
+</html>
